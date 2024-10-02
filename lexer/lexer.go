@@ -1,7 +1,6 @@
 package lexer
 
 import (
-	"golang.org/x/text/cases"
 	"millanuka.com/lisp-interpreter/token"
 )
 
