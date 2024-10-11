@@ -48,7 +48,7 @@ func (l *Lexer) NextToken() token.Token {
 	case '+':
 		// TODO
 	case '\'':
-		return newToken(token.QUOTE, "'")
+		tok = newToken(token.QUOTE, "'")
 	default:
 		// TODO
 	}
