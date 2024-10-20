@@ -44,15 +44,25 @@ func (l *Lexer) NextToken() token.Token {
 		tok = newToken(token.RPAREN, ")")
 	case '.':
 		tok = newToken(token.DOT, ".")
-	case '-':
 	case '+':
-		// TODO
+		tok = newToken(token.PLUS, "+")
+	case '-':
+		tok = newToken(token.MINUS, "-")
 	case '\'':
 		tok = newToken(token.QUOTE, "'")
 	default:
-		// TODO
+		if isLetter(l.ch) {
+			tok.Literal = l.readIdentifier()
+			tok.Type = token.CHAR
+			return tok
+		} else if isDigit(l.ch) {
+			tok.Literal = l.readNumber()
+			tok.Type = token.NUMBER
+			return tok
+		} else {
+			tok = newToken(token.ERROR, string(l.ch))
+		}
 	}
-
 	l.readChar()
 	return tok
 }
@@ -63,10 +73,36 @@ func (l *Lexer) skipWhitespace() {
 	}
 }
 
+func (l *Lexer) readIdentifier() string {
+	position := l.position
+	for isLetter(l.ch) {
+		l.readChar()
+
+	}
+	return l.input[position:l.position]
+}
+
+func (l *Lexer) readNumber() string {
+	position := l.position
+	for isDigit(l.ch) {
+		l.readChar()
+	}
+
+	return l.input[position:l.position]
+}
+
 func newToken(tokenType token.TokenType, literal string) token.Token {
 	return token.Token{Type: tokenType, Literal: literal}
 }
 
 func newAtom(atomName string) token.Token {
 	return newToken(token.ATOM, atomName)
+}
+
+func isLetter(ch byte) bool {
+	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
+}
+
+func isDigit(ch byte) bool {
+	return '0' <= ch && ch <= '9'
 }
